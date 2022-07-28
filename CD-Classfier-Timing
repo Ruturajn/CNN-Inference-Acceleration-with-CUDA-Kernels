@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Author : Ruturajn <nanotiruturaj@gmail.com>
+
+# This script checks the timing for the CNN Inference.
+
+# Declare the colours
+BYellow="\e[1;33m"
+BBlue="\e[1;34m"
+BGreen="\e[1;32m"
+End_Colour="\e[0m"
+
+# Declare an empty array
+declare -a label_array=()
+
+# Set the Executable and Image Path
+EXEC_PATH="/home/ruturajn/Documents/Project-Files/CUDA_Scripts/CD-Classifier-CPP/build/cnn"
+IMG_PATH="/home/ruturajn/Downloads/test1/20.jpg"
+#IMG_PATH="/home/ruturajn/Downloads/201030094143-stock-rhodesian-ridgeback-super-tease.jpg"
+#IMG_PATH="/home/ruturajn/Downloads/dog_pic_1200.jpeg"
+
+# Run the Inference on the Image 10 times.
+for file_num in {1..10} ; do
+        echo -e "${BYellow}[ * ] Processing Picture in iteration ${file_num} ...${End_Colour}"
+        label_name=$("${EXEC_PATH}" "${IMG_PATH}" | grep -i "The Total Time on GPU : " | sed 's/The Total Time on GPU : //')
+        echo "${label_name}"
+        label_array+=("${label_name}")
+done
+
+# Add a '+' sign after every element in the array (Processing the array as string)
+echo -e "${BYellow}[ * ] Calculating Sum ...${End_Colour}"
+for n in {0..9} ; do
+        total+="${label_array[n]}+"
+done
+
+# Since, adding '+' after every element results in an extra '+' at the end,
+# so we append '0' to the end.
+total+="0"
+
+#echo ${total}
+
+# Now we print the whole string and pass it to bc, which will compute the sum,
+# of all the elements, to get an idea, the total variable before this command is
+# executed looks something like this for example, 
+# 50.08+50.34+32.356+674.7364+0
+# The original array will have 10 elements, so just extend the idea for 10 elements.
+total=$(echo "${total}" | bc -l)
+
+# Now we compute the average by dividing the total by 10.
+echo -e "${BYellow}[ * ] Calculating Average ...${End_Colour}"
+total=$(echo "${total}/10" | bc -l)
+
+echo "The Average Time on the GPU is : ${total}"

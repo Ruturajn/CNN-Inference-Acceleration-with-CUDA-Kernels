@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Author : Ruturajn <nanotiruturaj@gmail.com>
+
+# This script checks the accuracy for the CNN inference on a Cats and Dogs Model.
+
+
+BYellow="\e[1;33m"
+BBlue="\e[1;34m"
+BGreen="\e[1;32m"
+End_Colour="\e[0m"
+
+declare -a cat_label_array=()
+
+CAT_PATH="/home/ruturajn/Downloads/CD-Classifier-Test/PetImages/Cat/"
+DOG_PATH="/home/ruturajn/Downloads/CD-Classifier-Test/PetImages/Dog/"
+EXEC_PATH="/home/ruturajn/Documents/Project-Files/CUDA_Scripts/CD-Classifier/build/cnn"
+
+
+# -----------------------------------------Processing Cats------------------------------------------------
+
+for file_num in {1..100} ; do
+        echo -e "${BYellow}[ * ] Processing Cat Picture ${file_num}.jpg ...${End_Colour}"
+        label_name=$("${EXEC_PATH}" "${CAT_PATH}"/"${file_num}".jpg | tail -n 1 | sed 's/ .*//')
+        echo "${label_name}"
+        if [[ "${label_name}" == "Cat" ]] ; then
+                cat_label_array+=("1")
+        else
+                cat_label_array+=("0")
+        fi
+done
+
+
+
+echo -e "${BYellow}[ * ] Calculating Accuracy for Cats ...${End_Colour}"
+for n in "${cat_label_array[@]}" ; do
+        (( total+=n ))
+done
+
+total=$(echo "${total}/100" | bc -l)
+echo "The Accuray for Cats is : ${total}"
+
+# -----------------------------------------Processing Dogs------------------------------------------------
+
+echo -e "${BGreen}[ * ] Processing Cats Done ...${End_Colour}\n"
+echo -e "${BYellow}[ * ] Now Processing Dogs ...${End_Colour}\n"
+
+declare -a dog_label_array=()
+
+for file_num in {25..125} ; do
+        echo -e "${BYellow}[ * ] Processing Dog Picture ${file_num}.jpg ...${End_Colour}"
+        label_name=$("${EXEC_PATH}" "${DOG_PATH}"/"${file_num}".jpg | tail -n 1 | sed 's/ .*//')
+        echo "${label_name}"
+        if [[ "${label_name}" == "Dog" ]] ; then
+                dog_label_array+=("1")
+        else
+                dog_label_array+=("0")
+        fi
+done
+        
+
+echo -e "${BYellow}[ * ] Calculating Accuracy for Dogs ...${End_Colour}"
+for n in "${cat_label_array[@]}" ; do
+        (( total_dogs+=n ))
+done
+
+total_dogs=$(echo "${total_dogs}/100" | bc -l)
+echo "The Accuray for Dogs is : ${total_dogs}"

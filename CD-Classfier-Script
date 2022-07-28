@@ -60,7 +60,7 @@ done
         
 
 echo -e "${BYellow}[ * ] Calculating Accuracy for Dogs ...${End_Colour}"
-for n in "${cat_label_array[@]}" ; do
+for n in "${dog_label_array[@]}" ; do
         (( total_dogs+=n ))
 done
 
